@@ -1,9 +1,9 @@
 #customer churn prediction
 
-#project overview
+#project overview:
 This project predicts whether a customer is likely to leave the bank using logistic Regression
 
-#dataset
+#dataset:
 customer information
 credit score
 age
@@ -14,7 +14,7 @@ EstimatedSalary
 
 10,000 rows,13 columns
 
-#project workflow
+#project workflow:
 Data loading
 Data cleaning
 EDA
@@ -27,21 +27,21 @@ try multiple algorithms
     *DecisionTreeClassifier
     *RandomForestClassifier
 
-#best model performance is LogisticRegression
+#best model performance is LogisticRegression:
 
-#model performance in logistic Regression
+#model performance in logistic Regression:
 Accuracy:72.04%
 Precision:38.85%
 Recall:70.82%
 
-#RandomForest achived 80.2% Recall after SMOTE balancing
+#RandomForest achived 80.2% Recall after SMOTE balancing:
 
-#Key insights
+#Key insights:
 Age showed positive correlation with churn
 Germany customers had hiher churn rates
 Active members were likely to churn
 
-#pickle is used to save trained machine learning model
+#pickle is used to save trained machine learning model:
 
-#Author
+#Author:
 Vishva
