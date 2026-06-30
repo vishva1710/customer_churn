@@ -1,77 +1,122 @@
 **Customer Churn Prediction**
-
-Problem Statement:
-
-**Predicting customer churn using machine learning models to classify customers as Exited or Retained**
+Business Problem:
+Bank Customers who are likely to leave the bank can be identified early using Machine Learning ,allowing the bank to take retention actions
 
 Dataset:
+The dataset used is Churn_Modelling.csv, which contains information on 10,000 bank customers.
+Original columns: RowNumber, CustomerId, Surname, CreditScore, Geography, Gender, Age, Tenure, Balance, NumOfProducts, HasCrCard, IsActiveMember, EstimatedSalary, Exited
 
-*Source:Churn_Modelling.csv(kaggle),
-*Total Records:10,000 customers,
-*Features:11 columns(after dropping unnecassary ones).
+Target variable: Exited
+0 → Customer stayed (No Churn)
+1 → Customer left (Churn)
 
-**Features used**:
+Class distribution:
+0 (Stayed): 79.63%
+1 (Churned): 20.37%
+The dataset is imbalanced, which is addressed using SMOTE oversampling.
 
-Feature:CreditScore,Geography,Gender,Age,Tenure,Balance,NumOfProducts,IsActiveMember,Estimatedsalary,
-Exited-Target Column  1-churned,0-Retained.
+Project Workflow:
 
-**Dropped Columns**:
+1. Data Preprocessing:
+Drop unnecessary columns:
+Rownumber,Customerid,Surname
 
-RowNumbers,CustomerId,Surname-Not useful for prediction.
+Check for null values:
+No missing values were found across all columns (CreditScore, Geography, Gender, Age, Tenure, Balance, NumOfProducts, HasCrCard, IsActiveMember, EstimatedSalary, Exited).
 
-**Project Workflow**:
+Check for duplicate rows:
 
-import necessary libraries,
-Data loading,
-Data exploration,
-EDA(boxplot-outliers,Scatterplot-for realtionship between two features,histplot-ditribution,heatmap-for correlation),
-Data Preprocessing,
-Feature engineering,
-Class imbalance using smote analysis,
-Train-test-split,
-model trained to try   multiple,algorithms:RandomForestClassifier,DecisionTreeClassifier,XGBClassifier.
+Encoding categorical features:
 
-**Results**:
+Geography was one-hot encoded using pd.get_dummies(), creating Geography_Germany and Geography_Spain columns (France is the reference category).
+Gender was label encoded (Male = 1, Female = 0 or similar mapping).
+After preprocessing, the dataset contains 12 columns and 10,000 rows, all non-null, with numeric dtypes.
 
-Model DecisionTree accuracy:0.7666,Precision:0.4475,Recall:0.7203,F1score:0.5520,
-Model RandomForest accuracy:0.8156,Precision:0.5287,Recall:0.6680,F1score:0.5902,
-Model XGBoost accuracy:0.8144,Precision:0.5279,Recall:0.6278,F1score:0.5735.
+3. Exploratory Data Analysis (EDA):
+Gender distribution:
+Male: 5,457
+Female: 4,543
 
-**ConfusionMatrix**:
+A pie chart was plotted to visualize the male vs. female ratio.
 
-Model DecisonTree TN:1561,FP:442,FN:139,TP:358,
-Model RandomForest TN:1707,FP:296,FN:165,TP:332,
-Model XGBoost TN:1724,FP:279,FN:185,TP:312.
+Distribution checks:
+Histograms were plotted for numerical columns: CreditScore, Age, Tenure, Balance, NumOfProducts, EstimatedSalary.
 
-**Best Model**:(RandomForest):
+CreditScore distribution is approximately normal with a slight skew.
+Age distribution is slightly right-skewed with outliers detected in a boxplot (values above ~60-65).
+Outliers in Age were not removed since tree-based models are robust to them.
 
-*Highest F1score(0.590)-best balance between Precison and Recall,
-*Good Accuracy(81.56%),
-*Recall(0.668)-catches 67% of actual churners.
+Scatter plot (Age vs Balance):
 
-**Key Observations**:
+Used to visualize the relationship between Age and Balance, colored by the Exited label. Churned customers (orange) tend to cluster at higher ages.
 
-*Dataset is Imbalanced-SMOTE applied to fix it,
-*Age column has outliers(60-92 range) but not removed-valid customer data,
-*CreditScore distribution is slightly left skewed,
-*Age distribution is slightly right skewed,
-XGBoost had very high Recall (0.99) but extremeky low Precision-too many false alarms.
+Correlation heatmap:
+A heatmap was generated to check feature correlations. Notable observations:
 
-**Save Model**:
+Age has a moderate positive correlation with Exited (~0.29).
+Balance has some correlation with Exited.
+NumOfProducts shows a moderate negative correlation with Balance (~-0.3).
 
-import pickle
-best_model=models["RandomForest"]
-pickle.dump(best_model,open("model.pkl","wb"))
-model=pickle.load(open("model.pkl","rb"))
+Churn distribution:
+A count plot confirmed the class imbalance — approximately 8,000 customers stayed vs. ~2,000 who churned.
+5. Segregating Features and Target
 
-**Requirements**:
+6. Train-Test Split-80:20
 
-numpy,
-pandas,
-matplotlib,
-seaborn,
-scikit-learn,
-imbalanced-learn,
-xgboost.
+7. Handling Class Imbalance with SMOTE:
+Since the dataset is imbalanced (80% stayed, 20% churned), SMOTE (Synthetic Minority Oversampling Technique) was applied to the training set to balance the classes.
 
+Before SMOTE: 6,370 (stayed) vs 1,630 (churned)
+After SMOTE: 6,370 vs 6,370 — perfectly balanced
 
+8. Feature Scaling:
+Standard scaling was applied for Logistic Regression:
+The scaler was saved using pickle for use during prediction on new data.
+
+10. Model Training and Evaluation:
+Baseline Model — Logistic Regression
+
+Comparing Multiple Algorithms:
+Three models were trained and compared:
+Model--Decision Tree:
+Train Accuracy--0.7892
+Test Accuracy--0.7705
+Precision--0.7705
+Recall--0.7027
+F1 Score--0.5548
+
+Model--Random Forest:
+Train Accuracy--0.8835
+Test Accuracy--0.7965
+Precision--0.5000
+Recall--0.6585
+F1 Score--0.5684
+
+Model--XGBoost:
+Train Accuracy--0.8748
+Test Accuracy--0.8015
+Precision--0.5097
+Recall--0.6437
+F1 Score--0.5689
+
+Confusion matrices:
+Decision Tree: [[1255, 338], [121, 286]]
+Random Forest: [[1325, 268], [139, 268]]
+XGBoost: [[1341, 252], [145, 262]]
+Cross Validation (XGBoost)
+
+11. Feature Importance:
+Feature importance was extracted from the Random Forest model and plotted as a bar chart. The top contributing features were:
+Age (most important, ~0.30)
+NumOfProducts (~0.17)
+Balance (~0.16)
+Other features: CreditScore, EstimatedSalary, Gender, etc.
+
+13. ROC Curve:
+The ROC curve was plotted for the Random Forest model, showing strong discriminative ability with the curve rising steeply toward the top-left corner.
+
+14. Saving the Model:
+The best model (Random Forest) and the scaler were saved using pickle for future inference:
+
+Results Summary:
+The XGBoost model achieved the best test accuracy at 80.15%, while the Random Forest model had a strong cross-validation F1 average of ~82.45% and was selected as the final model. The combination of SMOTE oversampling, feature encoding, and standard scaling significantly improved prediction quality on the minority (churn) class.
