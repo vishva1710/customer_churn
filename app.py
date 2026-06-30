@@ -6,6 +6,9 @@ import numpy as np
 # Model load
 with open('model.pkl', 'rb') as f:
     model = pickle.load(f)
+    
+with open('scaler.pkl','rb') as f:
+    scaler=pickle.load(f)
 
 # Page config
 st.set_page_config(
@@ -32,6 +35,7 @@ with col2:
     gender = st.selectbox("Gender", ["Male", "Female"])
     geography = st.selectbox("Geography", ["France", "Spain", "Germany"])
     num_products = st.selectbox("Number of Products", [1, 2, 3, 4])
+    has_cr_card=st.selectbox("Has Credit Card?",["Yes","No"])
     is_active = st.selectbox("Is Active Member", ["Yes", "No"])
 
 st.divider()
@@ -50,6 +54,7 @@ if st.button("🔍 Predict", use_container_width=True):
         'IsActiveMember': [is_active_val],
         'NumOfProducts': [num_products],
         'Balance': [balance],
+        'HasCrCard':[has_cr_card_val]
         'EstimatedSalary': [estimated_salary],
         'CreditScore': [credit_score],
         'Tenure': [tenure],
@@ -57,8 +62,8 @@ if st.button("🔍 Predict", use_container_width=True):
         'Geography_Germany': [geo_germany],
         'Gender': [gender_val]
     })
-    
-    prediction = model.predict(input_data)
+    input_scaled=scaler.transform(input_data)
+    prediction = model.predict(input_scaled)
     probability = model.predict_proba(input_data)
     
     churn_prob = probability[0][1] * 100
