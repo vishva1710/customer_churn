@@ -18,68 +18,68 @@ The dataset is imbalanced, which is addressed using SMOTE oversampling.
 
 Project Workflow:
 
-1. Data Preprocessing:
+1.Data Preprocessing:
 Drop unnecessary columns:
 Rownumber,Customerid,Surname.
 
-Check for null values:
+2.Check for null values:
 No missing values were found across all columns (CreditScore, Geography, Gender, Age, Tenure, Balance, NumOfProducts, HasCrCard, IsActiveMember, EstimatedSalary, Exited).
 
-Check for duplicate rows:
+3.Check for duplicate rows:
 
-Encoding categorical features:
+4.Encoding categorical features:
 Geography was one-hot encoded using pd.get_dummies(), creating Geography_Germany and Geography_Spain columns (France is the reference category).
 
 Gender was label encoded (Male = 1, Female = 0 or similar mapping).
 
 After preprocessing, the dataset contains 12 columns and 10,000 rows, all non-null, with numeric dtypes.
 
-2.Exploratory Data Analysis (EDA):
+5.Exploratory Data Analysis (EDA):
 Gender distribution:
 Male: 5,457,
 Female: 4,543.
 
 A pie chart was plotted to visualize the male vs. female ratio.
 
-Distribution checks:
+6.Distribution checks:
 Histograms were plotted for numerical columns: CreditScore, Age, Tenure, Balance, NumOfProducts, EstimatedSalary.
 
 CreditScore distribution is approximately normal with a slight skew.
 Age distribution is slightly right-skewed with outliers detected in a boxplot (values above ~60-65).
 Outliers in Age were not removed since tree-based models are robust to them.
 
-Scatter plot (Age vs Balance):
+7.Scatter plot (Age vs Balance):
 
 Used to visualize the relationship between Age and Balance, colored by the Exited label. Churned customers (orange) tend to cluster at higher ages.
 
-Correlation heatmap:
+8.Correlation heatmap:
 A heatmap was generated to check feature correlations. Notable observations:
 
-Age has a moderate positive correlation with Exited (~0.29),
+Age has a moderate positive correlation with Exited (0.29),
 Balance has some correlation with Exited,
-NumOfProducts shows a moderate negative correlation with Balance (~-0.3).
+NumOfProducts shows a moderate negative correlation with Balance (-0.3).
 
-Churn distribution:
+9.Churn distribution:
 A count plot confirmed the class imbalance — approximately 8,000 customers stayed vs. ~2,000 who churned.
 
-3.Segregating Features and Target:
+10.Segregating Features and Target:
 
-4.Train-Test Split-80:20
+11.Train-Test Split-80:20
 
-5. Handling Class Imbalance with SMOTE:
+12.Handling Class Imbalance with SMOTE:
 Since the dataset is imbalanced (80% stayed, 20% churned), SMOTE (Synthetic Minority Oversampling Technique) was applied to the training set to balance the classes.
 
 Before SMOTE: 6,370 (stayed) vs 1,630 (churned),
 After SMOTE: 6,370 vs 6,370 — perfectly balanced.
 
-6. Feature Scaling:
+13.Feature Scaling:
 Standard scaling was applied for Logistic Regression,
 The scaler was saved using pickle for use during prediction on new data.
 
-7. Model Training and Evaluation:
+14.Model Training and Evaluation:
 Baseline Model — Logistic Regression.
 
-Comparing Multiple Algorithms:
+15.Comparing Multiple Algorithms:
 Three models were trained and compared:
 Model--Decision Tree:
 Train Accuracy--0.7892,
@@ -102,24 +102,24 @@ Precision--0.5097,
 Recall--0.6437,
 F1 Score--0.5689,
 
-Confusion matrices:
+16.Confusion matrices:
 Decision Tree: [[1255, 338], [121, 286]]
 Random Forest: [[1325, 268], [139, 268]]
 XGBoost: [[1341, 252], [145, 262]]
 
-Cross Validation (XGBoost):
+17.Cross Validation (XGBoost):
 
-8. Feature Importance:
+18..Feature Importance:
 Feature importance was extracted from the Random Forest model and plotted as a bar chart. The top contributing features were:
 Age (most important, ~0.30),
 NumOfProducts (~0.17),
 Balance (~0.16),
 Other features: CreditScore, EstimatedSalary, Gender, etc.
 
-9.ROC Curve:
+19.ROC Curve:
 The ROC curve was plotted for the Random Forest model, showing strong discriminative ability with the curve rising steeply toward the top-left corner.
 
-10.Saving the Model:
+20.Saving the Model:
 The best model (Random Forest) and the scaler were saved using pickle for future inference:
 
 Results Summary:
